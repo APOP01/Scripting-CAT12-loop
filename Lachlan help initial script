@@ -1,0 +1,46 @@
+% List of open inputs
+nrun = 2; % enter the number of runs here
+jobfile = {'/home/alexandrap/Desktop/Alex tries to code/TheRealDeal/AttemptwfourLachlan_job.m'};
+
+% Get all files
+All_files = dir('*T1w.nii.gz');
+
+% Read the configuration file
+
+fid = fopen('/home/alexandrap/Desktop/Alex tries to code/TheRealDeal/AttemptwfourLachlan_job.m');
+id = 1;
+this_line = fgetl(fid);
+while ischar(this_line)
+    File{id} =  this_line;
+    this_line = fgetl(fid);
+    id = id+1;
+end
+fclose(fid);
+
+for file_id = 1:numel(All_files)
+    
+    filename = All_files(file_id).name;
+    filefolder = All_files(file_id).folder;
+    % Change first line of file to indluce new data
+    
+    File{1} = ['matlabbatch{1}.spm.tools.cat.estwrite.data = {',...
+        filefolder,filename,'}'];
+    
+    % Write to the same file
+    fid = fopen('/home/alexandrap/Desktop/Alex tries to code/TheRealDeal/AttemptwfourLachlan_job.m');
+    for i = 1:numel(File)
+%         if File{i+1} == -1
+%             fprintf(fid,'%s', File{i});
+%             break
+%         else
+            fprintf(fid,'%s\n', File{i});
+%         end
+    end
+    %%
+    jobs = repmat(jobfile, 1, nrun);
+    inputs = cell(0, nrun);
+    for crun = 1:nrun
+        
+    end
+    spm('defaults', 'PET');
+  spm_jobman('run', jobs, inputs{:});
